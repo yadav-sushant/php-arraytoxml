@@ -4,21 +4,23 @@ class Xml {
     function __construct(){
     
     }
-    
+
     function arrayToXml($data, $object){
         foreach ($data as $key => $value) {
             $key_arr = explode('_',$key);
             $keyname = (count($key_arr)>1 && is_numeric($key_arr[1]))?$key_arr[0]:$key;
             $attr = $value["attr"]??[];
             $value = $value["val"]??[];
-            if(!empty($attr)){
-                foreach($attr as $k => $v) $object->addAttribute($k, $v);
-            }
+            
             if (is_array($value)) {
                 $new_object = $object->addChild($keyname);
+                if(!empty($attr)) foreach($attr as $k => $v) $new_object->addAttribute($k, $v);
                 $this->arrayToXml($value, $new_object);
             } 
-            else $object->addChild($keyname, $value);
+            else{ 
+                $object->addChild($keyname, $value);
+                if(!empty($attr)) foreach($attr as $k => $v) $object->addAttribute($k, $v);
+            }
         }
     }
 
